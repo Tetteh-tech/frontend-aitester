@@ -5,6 +5,7 @@ import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cartesia
 import { Activity, Cpu, Zap, AlertTriangle, TrendingUp, TrendingDown, RefreshCw, Server, Database, Wifi } from 'lucide-react';
 import useStore from '../store/useStore';
 import axios from 'axios';
+import api from '../config/api';
 import { useQuery } from '@tanstack/react-query';
 
 const StressDashboard: React.FC = () => {
@@ -14,7 +15,7 @@ const StressDashboard: React.FC = () => {
   const { data: agentStats } = useQuery({
     queryKey: ['agent-stats'],
     queryFn: async () => {
-      const response = await axios.get('/api/ai/metrics', {
+      const response = await api.get('/api/ai/metrics', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       return response.data;
