@@ -1,14 +1,16 @@
-// src/components/Login.tsx
+// src/components/Register.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../config/api';
 
-interface LoginProps {
+interface RegisterProps {
   setIsAuthenticated: (value: boolean) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
+const Register: React.FC<RegisterProps> = ({ setIsAuthenticated }) => {
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,16 +21,21 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
     setLoading(true);
     
     try {
-      const response = await axios.post('http://localhost:8000/api/login', { 
+      const response = await api.post('/register', { 
+        name, 
+        username, 
         email, 
         password 
       });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       setIsAuthenticated(true);
-      toast.success('Welcome back! Ready to break some AI?');
+      toast.success('Account created! Start breaking Franklin Agent!');
       navigate('/');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.errors || 'Registration failed';
+      toast.error(typeof errorMessage === 'object' ? JSON.stringify(errorMessage) : errorMessage);
     } finally {
       setLoading(false);
     }
@@ -52,6 +59,7 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
         maxWidth: '400px',
         border: '1px solid rgba(139, 92, 246, 0.3)'
       }}>
+        {/* Similar styling as Login but with registration fields */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{
             width: '60px',
@@ -64,7 +72,7 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
             margin: '0 auto 1rem',
             fontSize: '2rem'
           }}>
-            ⚡
+            🚀
           </div>
           <h1 style={{
             fontSize: '1.875rem',
@@ -75,12 +83,52 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
             color: 'transparent',
             marginBottom: '0.5rem'
           }}>
-            Welcome Back
+            Join the Challenge
           </h1>
-          <p style={{ color: '#9ca3af' }}>Ready to challenge the AI?</p>
+          <p style={{ color: '#9ca3af' }}>Become a Franklin Agent Breaker today</p>
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', color: '#d1d5db', marginBottom: '0.5rem' }}>Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '0.5rem',
+                padding: '0.5rem 1rem',
+                color: 'white',
+                outline: 'none'
+              }}
+              placeholder="John Doe"
+              required
+            />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', color: '#d1d5db', marginBottom: '0.5rem' }}>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              style={{
+                width: '100%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: '0.5rem',
+                padding: '0.5rem 1rem',
+                color: 'white',
+                outline: 'none'
+              }}
+              placeholder="breaker123"
+              required
+            />
+          </div>
+
           <div>
             <label style={{ display: 'block', color: '#d1d5db', marginBottom: '0.5rem' }}>Email</label>
             <input
@@ -133,23 +181,18 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
               fontWeight: '600',
               border: 'none',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
+              transition: 'all 0.3s ease',
+              opacity: loading ? 0.7 : 1
             }}
           >
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
 
         <p style={{ textAlign: 'center', color: '#9ca3af', marginTop: '1.5rem' }}>
-          Don't have an account?{' '}
-          <Link to="/register" style={{ color: '#a855f7', textDecoration: 'none' }}>
-            Register
+          Already have an account?{' '}
+          <Link to="/login" style={{ color: '#a855f7', textDecoration: 'none' }}>
+            Login
           </Link>
         </p>
       </div>
@@ -157,4 +200,4 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
   );
 };
 
-export default Login;
+export default Register;
