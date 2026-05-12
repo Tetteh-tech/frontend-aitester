@@ -15,7 +15,7 @@ const StressDashboard: React.FC = () => {
   const { data: agentStats } = useQuery({
     queryKey: ['agent-stats'],
     queryFn: async () => {
-      const response = await api.get('/api/ai/metrics', {
+      const response = await api.get('/ai/metrics', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       return response.data;
