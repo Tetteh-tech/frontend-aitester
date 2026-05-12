@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { MessageCircle, Activity, Trophy, BarChart3, LogOut, User, Zap, Brain, Menu, X } from 'lucide-react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import api from '../config/api';
 
 interface NavbarProps {
   setIsAuthenticated: (value: boolean) => void;
@@ -30,9 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({ setIsAuthenticated }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const response = await axios.get('/api/user/stats', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const response = await api.get('/user/stats');
           setUserScore(response.data.user?.score || 0);
         }
       } catch (error) {
@@ -47,9 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({ setIsAuthenticated }) => {
     try {
       const token = localStorage.getItem('token');
       if (token) {
-        await axios.post('/api/logout', {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post('/logout');
       }
       localStorage.removeItem('token');
       localStorage.removeItem('user');
