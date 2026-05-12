@@ -3,20 +3,19 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Medal, Crown, TrendingUp, Award, Star, Zap, Target } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../config/api';
 
 const Leaderboard: React.FC = () => {
   const [category, setCategory] = useState('overall');
   
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['leaderboard', category],
     queryFn: async () => {
-      const response = await axios.get(`/api/leaderboard?category=${category}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+      const response = await api.get(`/leaderboard?category=${category}`);
       return response.data;
     },
-    refetchInterval: 30000
+    refetchInterval: 30000,
+    enabled: !!localStorage.getItem('token')
   });
 
   const categories = [
@@ -44,6 +43,29 @@ const Leaderboard: React.FC = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Loading leaderboard...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center">
+          <p className="text-red-400">Failed to load leaderboard. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <motion.div
@@ -62,7 +84,7 @@ const Leaderboard: React.FC = () => {
             <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
           </motion.div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-            Hall of Legends
+            Franklin Agent Breakers
           </h1>
           <p className="text-gray-400 mt-2">Top AI Breakers from around the world</p>
         </div>
@@ -108,66 +130,56 @@ const Leaderboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={6} className="text-center py-20">
-                      <div className="flex justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  <AnimatePresence>
-                    {data?.leaderboard?.map((user: any, index: number) => (
-                      <motion.tr
-                        key={user.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className={`border-b border-purple-500/20 hover:bg-white/5 transition ${getRankColor(user.rank)}`}
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-2">
-                            {getRankIcon(user.rank)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div>
-                            <div className="text-white font-semibold">{user.username || user.name}</div>
-                            {user.rank <= 3 && (
-                              <div className="text-xs text-yellow-400">
-                                {user.rank === 1 ? '👑 Supreme Breaker' : user.rank === 2 ? '🥈 Elite Breaker' : '🥉 Skilled Breaker'}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="text-2xl font-bold text-white">
-                            {category === 'success_rate' ? `${user.success_rate?.toFixed(1)}%` : user.score}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-right text-gray-300">
-                          {user.total_attacks}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="text-green-400 font-semibold">{user.successful_breaks}</div>
-                          <div className="text-xs text-gray-500">
-                            {user.total_attacks > 0 ? ((user.successful_breaks / user.total_attacks) * 100).toFixed(1) : 0}% rate
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-1 justify-center">
-                            {user.badges?.slice(0, 3).map((badge: string, i: number) => (
-                              <span key={i} className="text-xl" title={badge}>
-                                {badge.includes('Logic') ? '🧠' : badge.includes('Memory') ? '💾' : '💥'}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                )}
+                <AnimatePresence>
+                  {data?.leaderboard?.map((user: any, index: number) => (
+                    <motion.tr
+                      key={user.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`border-b border-purple-500/20 hover:bg-white/5 transition ${getRankColor(user.rank)}`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          {getRankIcon(user.rank)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-white font-semibold">{user.username || user.name}</div>
+                          {user.rank <= 3 && (
+                            <div className="text-xs text-yellow-400">
+                              {user.rank === 1 ? '👑 Supreme Breaker' : user.rank === 2 ? '🥈 Elite Breaker' : '🥉 Skilled Breaker'}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="text-2xl font-bold text-white">
+                          {category === 'success_rate' ? `${user.success_rate?.toFixed(1)}%` : user.score}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-right text-gray-300">
+                        {user.total_attacks}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="text-green-400 font-semibold">{user.successful_breaks}</div>
+                        <div className="text-xs text-gray-500">
+                          {user.total_attacks > 0 ? ((user.successful_breaks / user.total_attacks) * 100).toFixed(1) : 0}% rate
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-1 justify-center">
+                          {user.badges?.slice(0, 3).map((badge: string, i: number) => (
+                            <span key={i} className="text-xl" title={badge}>
+                              {badge.includes('Logic') ? '🧠' : badge.includes('Memory') ? '💾' : badge.includes('Speed') ? '⚡' : '💥'}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
