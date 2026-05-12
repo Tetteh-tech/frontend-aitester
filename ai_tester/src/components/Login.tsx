@@ -1,6 +1,7 @@
 // src/components/Login.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Mail, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../config/api';
 
@@ -11,6 +12,7 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -26,7 +28,7 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       setIsAuthenticated(true);
-      toast.success('Welcome back! Ready to break some AI?');
+      toast.success('Welcome back! Ready to break Franklin Agent?');
       navigate('/');
     } catch (error: any) {
       console.error('Login error:', error);
@@ -35,6 +37,10 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -86,42 +92,67 @@ const Login: React.FC<LoginProps> = ({ setIsAuthenticated }) => {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div>
             <label style={{ display: 'block', color: '#d1d5db', marginBottom: '0.5rem' }}>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                borderRadius: '0.5rem',
-                padding: '0.5rem 1rem',
-                color: 'white',
-                outline: 'none'
-              }}
-              placeholder="your@email.com"
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <Mail style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} size={18} />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  borderRadius: '0.5rem',
+                  padding: '0.5rem 1rem 0.5rem 2.5rem',
+                  color: 'white',
+                  outline: 'none'
+                }}
+                placeholder="your@email.com"
+                required
+              />
+            </div>
           </div>
 
           <div>
             <label style={{ display: 'block', color: '#d1d5db', marginBottom: '0.5rem' }}>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-                borderRadius: '0.5rem',
-                padding: '0.5rem 1rem',
-                color: 'white',
-                outline: 'none'
-              }}
-              placeholder="••••••••"
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <Lock style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} size={18} />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{
+                  width: '100%',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(139, 92, 246, 0.3)',
+                  borderRadius: '0.5rem',
+                  padding: '0.5rem 2.5rem 0.5rem 2.5rem',
+                  color: 'white',
+                  outline: 'none'
+                }}
+                placeholder="••••••••"
+                required
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#9ca3af',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button

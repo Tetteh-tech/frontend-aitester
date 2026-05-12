@@ -1,22 +1,17 @@
-// frontend/src/components/Register.tsx
+// src/components/Register.tsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, User, Zap } from 'lucide-react';
-import axios from 'axios';
+import { Mail, Lock, LogIn, User, Zap, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../config/api';
-
-
-// interface RegisterProps {
-//   setIsAuthenticated: (value: boolean) => void;
-// }
 
 const Register: React.FC<{ setIsAuthenticated: (value: boolean) => void }> = ({ setIsAuthenticated }) => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -29,14 +24,20 @@ const Register: React.FC<{ setIsAuthenticated: (value: boolean) => void }> = ({ 
         name, username, email, password 
       });
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       setIsAuthenticated(true);
-      toast.success('Account created! Start breaking the AI!');
+      toast.success('Account created! Start breaking Franklin Agent!');
       navigate('/');
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      const errorMessage = error.response?.data?.message || error.response?.data?.errors || 'Registration failed';
+      toast.error(typeof errorMessage === 'object' ? JSON.stringify(errorMessage) : errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -51,7 +52,7 @@ const Register: React.FC<{ setIsAuthenticated: (value: boolean) => void }> = ({ 
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             Join the Challenge
           </h1>
-          <p className="text-gray-400 mt-2">Become an AI Breaker today</p>
+          <p className="text-gray-400 mt-2">Become a Franklin Agent Breaker today</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -102,13 +103,20 @@ const Register: React.FC<{ setIsAuthenticated: (value: boolean) => void }> = ({ 
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/10 border border-purple-500/30 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
+                className="w-full bg-white/10 border border-purple-500/30 rounded-lg pl-10 pr-10 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
                 placeholder="••••••••"
                 required
               />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300 transition"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
