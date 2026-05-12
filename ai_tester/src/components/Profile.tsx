@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import api from '../config/api';
 import toast from 'react-hot-toast';
 
 interface UserStats {
@@ -46,7 +47,7 @@ const Profile: React.FC = () => {
   const { data: userData, isLoading, refetch } = useQuery({
     queryKey: ['user-profile'],
     queryFn: async () => {
-      const response = await axios.get('/api/user/stats', {
+      const response = await api.get('/user/stats', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       return response.data as UserStats;
