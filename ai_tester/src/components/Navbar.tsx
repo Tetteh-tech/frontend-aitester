@@ -71,10 +71,10 @@ const Navbar: React.FC<NavbarProps> = ({ setIsAuthenticated }) => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-              <span className="text-black font-bold text-sm">F</span>
+              <span className="text-black font-bold text-sm">T</span>
             </div>
             <span className="font-bold text-xl text-white">
-              BreakFranklin
+              TESTLIFY
             </span>
             <span className="text-xs bg-white/10 text-gray-400 px-2 py-0.5 rounded-full hidden md:inline-block">
               Beta
