@@ -52,7 +52,7 @@ const ChatArena: React.FC = () => {
       });
       return response.data;
     },
-    refetchInterval: 30000,
+    refetchInterval: 120000,
     enabled: !!localStorage.getItem('token')
   });
 
