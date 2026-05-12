@@ -3,10 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Zap, Brain, Cpu, Activity, AlertTriangle, Trophy, Clock, Route, Shield, Gauge } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
 import FranklinStatus from './FranklinStatus';
+import api from '../config/api';
 
 interface Message {
   id: string;
@@ -47,7 +47,7 @@ const ChatArena: React.FC = () => {
   const { data: franklinStats } = useQuery({
     queryKey: ['franklin-metrics'],
     queryFn: async () => {
-      const response = await axios.get('/api/franklin/metrics', {
+      const response = await api.get('/franklin/metrics', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       return response.data;
@@ -58,7 +58,7 @@ const ChatArena: React.FC = () => {
 
   const { mutate: sendPrompt, isPending } = useMutation({
     mutationFn: async (prompt: string) => {
-      const response = await axios.post('/api/ai/challenge', {
+      const response = await api.post('/ai/challenge', {
         prompt,
         attack_type: selectedAttack !== 'general' ? selectedAttack : null
       }, {
@@ -100,15 +100,16 @@ const ChatArena: React.FC = () => {
       }
       
       if (data.metadata?.agent_confidence && data.metadata.agent_confidence < 0.5) {
-       toast(`⚠️ Franklin Agent confidence dropped to ${(data.metadata.agent_confidence * 100).toFixed(0)}%!`, {
-  icon: '⚠️',
-  duration: 4000
-});
+        toast(`⚠️ Franklin Agent confidence dropped to ${(data.metadata.agent_confidence * 100).toFixed(0)}%!`, {
+          icon: '⚠️',
+          duration: 4000
+        });
       }
       
       setIsTyping(false);
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('API Error:', error);
       toast.error('Failed to challenge Franklin Agent. The system is under stress!');
       setIsTyping(false);
     }
@@ -290,13 +291,11 @@ const ChatArena: React.FC = () => {
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
                       : 'bg-white/10 backdrop-blur-sm border border-purple-500/30'
                   }`}>
-                   <ReactMarkdown 
-  components={{
-    p: ({ children }) => <p className="prose prose-invert max-w-none prose-sm">{children}</p>
-  }}
->
-  {message.content}
-</ReactMarkdown>
+                    <div className="prose prose-invert max-w-none prose-sm">
+                      <ReactMarkdown>
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
                     
                     {message.metadata && message.role === 'ai' && (
                       <div className="mt-3 pt-3 border-t border-white/20">
