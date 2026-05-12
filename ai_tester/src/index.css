@@ -2,3 +2,224 @@
 @tailwind components;
 @tailwind utilities;
 @import "tailwindcss";
+/* src/index.css - Black & White Theme */
+
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #000000;
+    color: #ffffff;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar - monochrome */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #555555;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #888888;
+  }
+
+  /* Selection color */
+  ::selection {
+    background: #ffffff;
+    color: #000000;
+  }
+}
+
+@layer components {
+  /* Glass morphism - black and white */
+  .glass {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  .glass-card {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-radius: 1rem;
+  }
+
+  /* Button styles - black and white */
+  .btn-primary {
+    background: #ffffff;
+    color: #000000;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    background: #e0e0e0;
+    transform: scale(1.02);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-secondary {
+    background: #1a1a1a;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #333333;
+  }
+
+  .btn-secondary:hover {
+    background: #2a2a2a;
+  }
+
+  /* Input styles - black and white */
+  .input-primary {
+    background: #0a0a0a;
+    border: 1px solid #333333;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    color: #ffffff;
+    transition: all 0.3s ease;
+  }
+
+  .input-primary:focus {
+    outline: none;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .input-primary::placeholder {
+    color: #555555;
+  }
+
+  /* Attack type badges - monochrome */
+  .attack-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium transition-all;
+  }
+  
+  .attack-logic {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333333;
+  }
+  
+  .attack-memory {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333333;
+  }
+  
+  .attack-contradiction {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333333;
+  }
+  
+  .attack-speed {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333333;
+  }
+  
+  .attack-security {
+    background: #1a1a1a;
+    color: #ffffff;
+    border: 1px solid #333333;
+  }
+  
+  /* Status indicators - monochrome */
+  .status-online {
+    background: #0a0a0a;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+  }
+  
+  .status-warning {
+    background: #1a1a1a;
+    color: #cccccc;
+    border: 1px solid #666666;
+  }
+  
+  .status-critical {
+    background: #1a1a1a;
+    color: #aaaaaa;
+    border: 1px solid #888888;
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes glow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Text gradient - white to gray */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, #ffffff, #888888);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #ffffff, #aaaaaa);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  /* Monochrome border */
+  .border-mono {
+    border-color: #2a2a2a;
+  }
+}

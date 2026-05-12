@@ -10,7 +10,7 @@ import ChatArena from './components/ChatArena';
 import StressDashboard from './components/StressDashboard';
 import Leaderboard from './components/Leaderboard';
 import Analytics from './components/Analytics';
-import Profile from './components/Profile';  // Make sure this is imported
+import Profile from './components/Profile';
 import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -39,7 +39,6 @@ function App() {
     setLoading(false);
   }, []);
 
-  // Poll for metrics instead of WebSockets
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -61,10 +60,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading...</p>
+          <div className="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading...</p>
         </div>
       </div>
     );
@@ -86,8 +85,8 @@ function App() {
             duration: 4000,
             style: {
               background: '#1a1a1a',
-              color: '#fff',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
+              color: '#ffffff',
+              border: '1px solid #333333',
               borderRadius: '0.5rem',
             },
           }}
@@ -99,11 +98,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <div className="min-h-screen bg-black">
           <Navbar setIsAuthenticated={setIsAuthenticated} />
           <AnimatePresence mode="wait">
             <Routes>
-              {/* IMPORTANT: Put more specific routes FIRST */}
               <Route path="/profile" element={<Profile />} />
               <Route path="/dashboard" element={<StressDashboard />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
@@ -118,8 +116,8 @@ function App() {
               duration: 4000,
               style: {
                 background: '#1a1a1a',
-                color: '#fff',
-                border: '1px solid rgba(168, 85, 247, 0.3)',
+                color: '#ffffff',
+                border: '1px solid #333333',
                 borderRadius: '0.5rem',
               },
             }}
